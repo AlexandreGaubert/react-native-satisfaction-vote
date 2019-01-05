@@ -4,7 +4,14 @@ var bodyParser = require('body-parser');
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-const port = 80;
+
+var port = 80;
+var mongoDB = 'mongodb://127.0.0.1:27017/ourme-tools';
+
+process.argv.forEach(function (val, index, array) {
+  if (val === "-db") mongoDB = array[index + 1];
+  if (val === "-port") port = array[index + 1]
+});
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -15,7 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Mongo connexion
-var mongoDB = 'mongodb://127.0.0.1:27017/ourme-tools';
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
@@ -26,8 +32,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 var Event = require("./models/eventModel");
 
 io.on('connection', function(socket) {
-  console.log("user connected");
-
   socket.on('initVote', function(data) {
     var event = new Event();
     console.log(data);
@@ -64,6 +68,5 @@ io.on('connection', function(socket) {
 })
 
 http.listen(port, function() {
-    console.clear();
     console.log(`server is listening on port ${port}.`)
 })
