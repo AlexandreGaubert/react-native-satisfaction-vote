@@ -26,13 +26,15 @@ export default class Vote extends Component {
     this.handleVoteUp = this.handleVoteUp.bind(this);
     this.handleVoteDown = this.handleVoteDown.bind(this);
     this.handleVoteSoso = this.handleVoteSoso.bind(this);
+    this.resetVote = this.resetVote.bind(this);
   }
 
   handleVoteUp() {
     var now = Date.now();
-    this.props.registerVote('up');
 
     this.setState(prevstate => {
+    now - prevstate.now <= 1000 ? null : this.props.registerVote('up');
+
       return {
         vote: (now - prevstate.now <= 1000) ? prevstate.vote : prevstate.vote + 1,
         voteUp: (now - prevstate.now <= 1000) ? prevstate.voteUp : prevstate.voteUp + 1,
@@ -43,9 +45,10 @@ export default class Vote extends Component {
 
   handleVoteDown() {
     var now = Date.now();
-    this.props.registerVote('down');
 
     this.setState(prevstate => {
+      now - prevstate.now <= 1000 ? null : this.props.registerVote('down');
+
       return {
         vote: (now - prevstate.now <= 1000) ? prevstate.vote : prevstate.vote + 1,
         voteDown: (now - prevstate.now <= 1000) ? prevstate.voteDown : prevstate.voteDown + 1,
@@ -56,15 +59,21 @@ export default class Vote extends Component {
 
   handleVoteSoso() {
     var now = Date.now();
-    this.props.registerVote('soso');
 
     this.setState(prevstate => {
+      now - prevstate.now <= 1000 ? null : this.props.registerVote('soso');
+
       return {
         vote: (now - prevstate.now <= 1000) ? prevstate.vote : prevstate.vote + 1,
         voteSoso: (now - prevstate.now <= 1000) ? prevstate.voteSoso : prevstate.voteSoso + 1,
         now: now
       }
     });
+  }
+
+  resetVote() {
+    this.setState({vote: 0, voteUp: 0, voteDown: 0, voteSoso: 0, now: Date.now()})
+    this.props.resetVote()
   }
 
   renderVoting() {
@@ -123,7 +132,7 @@ export default class Vote extends Component {
         </View>
         <View style={styles.buttonGroup}>
           <Button title="RETOUR AU VOTE" onPress={() => this.setState({displayResults: false})}/>
-          <Button color="red" title="RECOMMENCER LE VOTE" onPress={() => this.setState({vote: 0, voteUp: 0, voteDown: 0, voteSoso: 0, now: Date.now()})}/>
+          <Button color="red" title="RECOMMENCER LE VOTE" onPress={this.resetVote}/>
         </View>
       </View>
     )

@@ -29,6 +29,7 @@ export default class App extends Component {
 
     this.initVote = this.initVote.bind(this);
     this.registerVote = this.registerVote.bind(this);
+    this.resetVote = this.resetVote.bind(this);
   }
 
   initVote(name, type) {
@@ -42,6 +43,11 @@ export default class App extends Component {
   registerVote(vote) {
     const eventID = this.state.eventID;
     this.socket.emit('vote', {vote, eventID})
+  }
+
+  resetVote() {
+    const eventID = this.state.eventID;
+    this.socket.emit('resetVote', {eventID});
   }
 
   componentDidMount() {
@@ -60,7 +66,7 @@ export default class App extends Component {
     return (
       <View>
         <StatusBar hidden/>
-        <Vote registerVote={this.registerVote}/>
+        <Vote resetVote={this.resetVote} registerVote={this.registerVote}/>
       </View>
     )
   }
